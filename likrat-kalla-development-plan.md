@@ -235,3 +235,11 @@ When donors check out or submit a sponsorship on Likrat Kalla, we pass the total
 - **Intent:** Deploy to Vercel, link Supabase production database, configure custom domains (`www.helpjewishbrides.org`), and provide documentation for admins.
 - **Expected Outcomes:** Live production site running at $0/month baseline cost with full documentation.
 - **Status:** `[x] done`
+
+---
+
+## 7. Future Enhancements & Backlog
+
+- [ ] **Donor Confirmation Email:** Automatically dispatch a bilingual confirmation/thank-you email with the submitted prayer list directly to the donor's email address upon form submission.
+- [ ] **Color Scheme & Palette Customization:** Adjust brand gold/navy accents per design feedback.
+- [ ] **Direct Lemaan Achai Webhook/Callback:** If Lemaan Achai provides a webhook endpoint, automatically update `prayer_submissions` payment status in real-time.
