@@ -506,3 +506,46 @@ export async function updateSiteSettings(
   }
   return { ok: true };
 }
+
+// ---------------------------------------------------------------------------
+// Image & Media Storage Upload
+// ---------------------------------------------------------------------------
+
+export async function uploadImage(
+  formData: FormData,
+  bucket: 'catalog' | 'gallery' = 'catalog',
+): Promise<ActionResult<{ url: string }>> {
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard;
+
+  const file = formData.get('file') as File | null;
+  if (!file) return { ok: false, reason: 'error', message: 'No file provided' };
+
+  const client = createAdminClient();
+  if (!client) {
+    return {
+      ok: false,
+      reason: 'not_configured',
+      message: 'Supabase storage is not configured. Please paste a direct image URL.',
+    };
+  }
+
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  const { error: uploadError } = await client.storage
+    .from(bucket)
+    .upload(fileName, buffer, {
+      contentType: file.type || 'image/jpeg',
+      upsert: true,
+    });
+
+  if (uploadError) {
+    console.error('[storage] Upload error:', uploadError.message);
+    return { ok: false, reason: 'error', message: uploadError.message };
+  }
+
+  const { data } = client.storage.from(bucket).getPublicUrl(fileName);
+  return { ok: true, data: { url: data.publicUrl } };
+}

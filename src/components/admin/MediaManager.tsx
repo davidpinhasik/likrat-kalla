@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import ImageUploadField from './ImageUploadField';
 import {
   createMedia,
   updateMedia,
@@ -286,16 +287,25 @@ export default function MediaManager({ initialItems }: Props) {
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">URL *</label>
-                <input
-                  required
+              {form.media_type === 'image' ? (
+                <ImageUploadField
+                  label="Media Photo"
                   value={form.url}
-                  onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
-                  placeholder="https://... or YouTube URL"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
+                  onChange={(url) => setForm((f) => ({ ...f, url }))}
+                  bucket="gallery"
                 />
-              </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">YouTube / Video URL *</label>
+                  <input
+                    required
+                    value={form.url}
+                    onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    className="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Title EN</label>

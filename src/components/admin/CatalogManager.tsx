@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import ImageUploadField from './ImageUploadField';
 import {
   createCatalogItem,
   updateCatalogItem,
@@ -267,15 +268,12 @@ export default function CatalogManager({ initialItems }: Props) {
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Image URL</label>
-                <input
-                  value={form.image_url}
-                  onChange={(e) => f('image_url', e.target.value)}
-                  placeholder="https://..."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
-                />
-              </div>
+              <ImageUploadField
+                label="Item Photo"
+                value={form.image_url}
+                onChange={(url) => f('image_url', url)}
+                bucket="catalog"
+              />
               {editing && (
                 <label className="flex items-center gap-2 text-sm text-gray-700">
                   <input
