@@ -36,10 +36,10 @@ const MOCK_ADMIN_EMAIL = 'admin@helpjewishbrides.org';
 const MOCK_ADMIN_PASSWORD = 'admin1234';
 const MOCK_SESSION_COOKIE = 'admin_mock_session';
 
+import { isSupabaseConfigured } from '@/lib/supabase/env';
+
 function isMockMode(): boolean {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
-  return !url || !key;
+  return !isSupabaseConfigured();
 }
 
 // ---------------------------------------------------------------------------
@@ -49,12 +49,12 @@ function isMockMode(): boolean {
 export async function adminLogin(credentials: {
   email: string;
   password: string;
-}): Promise<{ ok: true } | { ok: false; reason: 'invalid_credentials' | 'error' }> {
+}): Promise<{ ok: true } | { ok: false; reason: 'invalid_credentials' | 'error'; message?: string }> {
   const { email, password } = credentials;
 
   if (isMockMode()) {
     // Fallback: compare against hardcoded mock admin (dev/demo mode only)
-    if (email === MOCK_ADMIN_EMAIL && password === MOCK_ADMIN_PASSWORD) {
+    if (email.trim().toLowerCase() === MOCK_ADMIN_EMAIL && password === MOCK_ADMIN_PASSWORD) {
       const cookieStore = await cookies();
       cookieStore.set(MOCK_SESSION_COOKIE, '1', {
         httpOnly: true,
@@ -64,21 +64,26 @@ export async function adminLogin(credentials: {
       });
       return { ok: true };
     }
-    return { ok: false, reason: 'invalid_credentials' };
+    return { ok: false, reason: 'invalid_credentials', message: 'Mock mode active. Use admin@helpjewishbrides.org / admin1234 or configure Supabase keys.' };
   }
 
   const client = await createClient();
-  if (!client) return { ok: false, reason: 'error' };
+  if (!client) return { ok: false, reason: 'error', message: 'Database client not initialized.' };
 
-  const { error } = await client.auth.signInWithPassword({ email, password });
+  const { error } = await client.auth.signInWithPassword({
+    email: email.trim(),
+    password,
+  });
+
   if (error) {
-    if (
-      error.message.toLowerCase().includes('invalid') ||
-      error.message.toLowerCase().includes('credentials')
-    ) {
-      return { ok: false, reason: 'invalid_credentials' };
-    }
-    return { ok: false, reason: 'error' };
+    console.error('[auth] Supabase signIn error:', error.message);
+    return {
+      ok: false,
+      reason: error.message.toLowerCase().includes('invalid') || error.message.toLowerCase().includes('credential')
+        ? 'invalid_credentials'
+        : 'error',
+      message: error.message,
+    };
   }
   return { ok: true };
 }

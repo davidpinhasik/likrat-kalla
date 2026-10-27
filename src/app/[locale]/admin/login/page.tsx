@@ -25,9 +25,10 @@ export default function AdminLoginPage() {
         router.push(`/${locale}/admin`);
       } else {
         setError(
-          result.reason === 'invalid_credentials'
+          result.message ??
+          (result.reason === 'invalid_credentials'
             ? t('loginErrorCredentials')
-            : t('loginErrorGeneric'),
+            : t('loginErrorGeneric')),
         );
       }
     });
