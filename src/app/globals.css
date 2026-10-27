@@ -1,0 +1,12 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Hebrew RTL body text uses Heebo; English LTR uses Inter */
+[dir='rtl'] body {
+  font-family: var(--font-heebo), var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+}
+
+[dir='ltr'] body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
