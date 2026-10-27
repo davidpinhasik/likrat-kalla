@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, useTransition } from 'react';
+import { useState, useRef } from 'react';
 import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 import { uploadImage } from '@/app/actions/admin';
 
 type Props = {
@@ -18,11 +19,11 @@ export default function ImageUploadField({
   bucket = 'catalog',
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isPending, startTransition] = useTransition();
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showUrlInput, setShowUrlInput] = useState(false);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -31,25 +32,57 @@ export default function ImageUploadField({
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Image must be under 10MB');
+    if (file.size > 15 * 1024 * 1024) {
+      setError('Image must be under 15MB');
       return;
     }
 
     setError(null);
-    const formData = new FormData();
-    formData.append('file', file);
+    setUploading(true);
 
-    startTransition(async () => {
+    try {
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
+
+      // 1. Try Direct Client-side upload to Supabase Storage (fastest & handles large files)
+      const supabase = createClient();
+      if (supabase) {
+        const { error: uploadError } = await supabase.storage
+          .from(bucket)
+          .upload(fileName, file, {
+            contentType: file.type || 'image/jpeg',
+            upsert: true,
+          });
+
+        if (!uploadError) {
+          const { data } = supabase.storage.from(bucket).getPublicUrl(fileName);
+          if (data?.publicUrl) {
+            onChange(data.publicUrl);
+            setUploading(false);
+            return;
+          }
+        }
+      }
+
+      // 2. Fallback to Server Action if client-side upload didn't succeed
+      const formData = new FormData();
+      formData.append('file', file);
       const result = await uploadImage(formData, bucket);
+
       if (result.ok && result.data?.url) {
         onChange(result.data.url);
       } else {
-        const errorMsg = !result.ok && result.message ? result.message : 'Failed to upload image. You can paste a direct URL below.';
-        setError(errorMsg);
+        const msg = !result.ok && result.message ? result.message : 'Upload failed. You can paste a direct URL below.';
+        setError(msg);
         setShowUrlInput(true);
       }
-    });
+    } catch (err) {
+      console.error('Image upload failed:', err);
+      setError('Upload failed. You can paste a direct URL below.');
+      setShowUrlInput(true);
+    } finally {
+      setUploading(false);
+    }
   }
 
   function handleClear() {
@@ -106,15 +139,15 @@ export default function ImageUploadField({
             accept="image/png,image/jpeg,image/webp,image/gif"
             onChange={handleFileChange}
             className="hidden"
-            id={`file-upload-${bucket}`}
+            id={`file-upload-${bucket}-${label.replace(/\s+/g, '-').toLowerCase()}`}
           />
           <button
             type="button"
-            disabled={isPending}
+            disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-brand-gold transition-colors shadow-sm disabled:opacity-50"
           >
-            {isPending ? (
+            {uploading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin text-brand-gold" />
                 Uploading...
@@ -127,7 +160,7 @@ export default function ImageUploadField({
             )}
           </button>
           <p className="text-[11px] text-gray-400 mt-1">
-            PNG, JPG, WebP up to 10MB (stored securely in Supabase)
+            PNG, JPG, WebP up to 15MB (stored securely in Supabase)
           </p>
         </div>
       </div>
