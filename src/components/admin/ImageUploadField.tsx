@@ -45,7 +45,8 @@ export default function ImageUploadField({
       if (result.ok && result.data?.url) {
         onChange(result.data.url);
       } else {
-        setError(result.message || 'Failed to upload image. You can paste a direct URL below.');
+        const errorMsg = !result.ok && result.message ? result.message : 'Failed to upload image. You can paste a direct URL below.';
+        setError(errorMsg);
         setShowUrlInput(true);
       }
     });
