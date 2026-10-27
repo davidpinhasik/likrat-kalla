@@ -19,6 +19,17 @@ export async function getSiteSettings(): Promise<SiteSettingValues> {
       overrides[key] = value;
     }
   }
+
+  // Ensure admin_emails is always an array of strings
+  if (typeof settings.admin_emails === 'string') {
+    settings.admin_emails = (settings.admin_emails as string)
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  } else if (!Array.isArray(settings.admin_emails)) {
+    settings.admin_emails = [...SEED_SETTINGS.admin_emails];
+  }
+
   return settings;
 }
 

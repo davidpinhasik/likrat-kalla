@@ -89,14 +89,23 @@ export async function sendAdminNotification(
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const configured = !!apiKey && !PLACEHOLDER_PATTERN.test(apiKey);
 
-  if (!configured || notification.recipients.length === 0) {
+  const cleanRecipients = (
+    Array.isArray(notification.recipients)
+      ? notification.recipients
+      : [String(notification.recipients)]
+  )
+    .map((r) => r.trim())
+    .filter((r) => r.length > 0 && r.includes('@'));
+
+  if (!configured || cleanRecipients.length === 0) {
     console.info(
-      `[email:mock] To: ${notification.recipients.join(', ') || '(none)'}\nSubject: ${subject}\n${text}`,
+      `[email:mock] To: ${cleanRecipients.join(', ') || '(none)'}\nSubject: ${subject}\n${text}`,
     );
     return { ok: false, mocked: true };
   }
 
   try {
+    const fromAddress = process.env.EMAIL_FROM?.trim() || DEFAULT_FROM;
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -104,8 +113,8 @@ export async function sendAdminNotification(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM?.trim() || DEFAULT_FROM,
-        to: notification.recipients,
+        from: fromAddress,
+        to: cleanRecipients,
         reply_to: notification.donor.email,
         subject,
         text,
@@ -113,14 +122,13 @@ export async function sendAdminNotification(
       }),
     });
     if (!response.ok) {
-      console.error(
-        `[email] Resend responded ${response.status}: ${await response.text()}`,
-      );
+      const errText = await response.text();
+      console.warn(`[email] Resend responded ${response.status}: ${errText}`);
       return { ok: false, mocked: false };
     }
     return { ok: true, mocked: false };
   } catch (err) {
-    console.error('[email] Failed to send admin notification:', err);
+    console.warn('[email] Failed to send admin notification:', err);
     return { ok: false, mocked: false };
   }
 }

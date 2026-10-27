@@ -58,35 +58,36 @@ async function getSiteOrigin(): Promise<string | null> {
 export async function submitDonation(
   request: DonationRequest,
 ): Promise<DonationResult> {
-  const donor = {
-    name: clean(request?.donor?.name),
-    email: clean(request?.donor?.email),
-    phone: clean(request?.donor?.phone, 40) || undefined,
-  };
-  if (!donor.name || !EMAIL_PATTERN.test(donor.email)) {
-    return { ok: false, error: 'invalid_donor' };
-  }
-  const locale = request.locale === 'he' ? 'he' : 'en';
-
-  let amount = 0;
-  let sponsorshipType: SponsorshipType;
-  let kallaId: string | null = null;
-  let names: PrayerName[] = [];
-  const details: string[] = [];
-
-  switch (request.type) {
-    case 'package': {
-      const quantity = Math.floor(Number(request.quantity));
-      if (!(quantity >= 1 && quantity <= MAX_PACKAGES)) {
-        return { ok: false, error: 'invalid_request' };
-      }
-      const { package_cost_nis } = await getSiteSettings();
-      amount = quantity * package_cost_nis;
-      sponsorshipType = 'package';
-      names = cleanNames(request.names, quantity * MAX_NAMES_PER_PACKAGE);
-      details.push(`Packages: ${quantity} x ${package_cost_nis} NIS`);
-      break;
+  try {
+    const donor = {
+      name: clean(request?.donor?.name),
+      email: clean(request?.donor?.email),
+      phone: clean(request?.donor?.phone, 40) || undefined,
+    };
+    if (!donor.name || !EMAIL_PATTERN.test(donor.email)) {
+      return { ok: false, error: 'invalid_donor' };
     }
+    const locale = request.locale === 'he' ? 'he' : 'en';
+
+    let amount = 0;
+    let sponsorshipType: SponsorshipType;
+    let kallaId: string | null = null;
+    let names: PrayerName[] = [];
+    const details: string[] = [];
+
+    switch (request.type) {
+      case 'package': {
+        const quantity = Math.floor(Number(request.quantity));
+        if (!(quantity >= 1 && quantity <= MAX_PACKAGES)) {
+          return { ok: false, error: 'invalid_request' };
+        }
+        const { package_cost_nis } = await getSiteSettings();
+        amount = quantity * (package_cost_nis || 500);
+        sponsorshipType = 'package';
+        names = cleanNames(request.names, quantity * MAX_NAMES_PER_PACKAGE);
+        details.push(`Packages: ${quantity} x ${package_cost_nis || 500} NIS`);
+        break;
+      }
     case 'catalog_items': {
       if (!Array.isArray(request.items)) {
         return { ok: false, error: 'invalid_request' };
@@ -192,4 +193,8 @@ export async function submitDonation(
   });
 
   return { ok: true, submissionId, redirectUrl };
+  } catch (err) {
+    console.error('[donate] Unexpected error in submitDonation:', err);
+    return { ok: false, error: 'invalid_request' };
+  }
 }
