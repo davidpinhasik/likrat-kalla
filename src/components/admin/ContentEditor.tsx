@@ -13,6 +13,10 @@ type Props = {
 const CONTENT_KEYS = [
   { key: 'home_hero_title', label: 'Home Hero Title' },
   { key: 'home_hero_subtitle', label: 'Home Hero Subtitle' },
+  { key: 'home_impact_brides_value', label: 'Impact — Brides Count (e.g. 7,301+)' },
+  { key: 'home_impact_gifts_value', label: 'Impact — Gifts Per Bride (e.g. ~10)' },
+  { key: 'home_impact_volunteer_value', label: 'Impact — Volunteer % (e.g. 100%)' },
+  { key: 'home_impact_years_value', label: 'Impact — Years of Chesed (e.g. 22+)' },
   { key: 'about_mission_text', label: 'About — Mission Text' },
   { key: 'about_history_text', label: 'About — History Text' },
   { key: 'about_partnership_text', label: 'About — Partnership Text' },

@@ -23,10 +23,26 @@ export default async function HomePage({ params }: Props) {
   ]);
 
   const impactStats = [
-    { icon: Users, value: '2,000+', label: t('impactBrides') },
-    { icon: Gift, value: '~10', label: t('impactGifts') },
-    { icon: Star, value: '100%', label: t('impactVolunteer') },
-    { icon: Heart, value: '20+', label: t('impactYears') },
+    {
+      icon: Users,
+      value: content['home_impact_brides_value'] || '7,301+',
+      label: t('impactBrides'),
+    },
+    {
+      icon: Gift,
+      value: content['home_impact_gifts_value'] || '~10',
+      label: t('impactGifts'),
+    },
+    {
+      icon: Star,
+      value: content['home_impact_volunteer_value'] || '100%',
+      label: t('impactVolunteer'),
+    },
+    {
+      icon: Heart,
+      value: content['home_impact_years_value'] || '22+',
+      label: t('impactYears'),
+    },
   ];
 
   const actionCards = [
