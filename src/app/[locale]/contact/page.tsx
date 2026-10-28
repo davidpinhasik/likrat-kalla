@@ -2,6 +2,8 @@ import { getTranslations } from 'next-intl/server';
 import { Phone, Clock, Mail, Heart } from 'lucide-react';
 import PublicLayout from '@/components/PublicLayout';
 import ContactForm from '@/components/ContactForm';
+import { getSiteContent } from '@/lib/data/content';
+import type { Locale } from '@/types/database';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -9,7 +11,11 @@ type Props = {
 
 export default async function ContactPage({ params }: Props) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'contact' });
+  const loc = (locale === 'he' ? 'he' : 'en') as Locale;
+  const [t, content] = await Promise.all([
+    getTranslations({ locale, namespace: 'contact' }),
+    getSiteContent(loc),
+  ]);
 
   const ivrSteps = [
     {
@@ -119,7 +125,7 @@ export default async function ContactPage({ params }: Props) {
                   {t('ivrHoursWinter')}
                 </li>
               </ul>
-              <p className="mt-3 text-xs text-gray-400 italic">{t('ivrNote')}</p>
+              <p className="mt-3 text-xs text-gray-400 italic">{content['contact_ivr_note'] || t('ivrNote')}</p>
             </div>
           </div>
 

@@ -4,6 +4,8 @@ import { Heart, Users, Handshake, CheckCircle2 } from 'lucide-react';
 import PublicLayout from '@/components/PublicLayout';
 import MediaGallery from '@/components/MediaGallery';
 import { getSiteMedia } from '@/lib/data/media';
+import { getSiteContent } from '@/lib/data/content';
+import type { Locale } from '@/types/database';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -11,27 +13,31 @@ type Props = {
 
 export default async function AboutPage({ params }: Props) {
   const { locale } = await params;
+  const loc = (locale === 'he' ? 'he' : 'en') as Locale;
   const t = await getTranslations({ locale, namespace: 'about' });
   const tNav = await getTranslations({ locale, namespace: 'nav' });
 
-  // Fetch all about gallery media
-  const galleryMedia = await getSiteMedia('about_gallery');
+  // Fetch all about gallery media and dynamic copy overrides
+  const [galleryMedia, content] = await Promise.all([
+    getSiteMedia('about_gallery'),
+    getSiteContent(loc),
+  ]);
 
   const pillars = [
     {
       icon: Heart,
       title: t('missionTitle'),
-      text: t('missionText'),
+      text: content['about_mission_text'] || t('missionText'),
     },
     {
       icon: Users,
       title: t('historyTitle'),
-      text: t('historyText'),
+      text: content['about_history_text'] || t('historyText'),
     },
     {
       icon: Handshake,
       title: t('partnershipTitle'),
-      text: t('partnershipText'),
+      text: content['about_partnership_text'] || t('partnershipText'),
     },
   ];
 
@@ -79,7 +85,7 @@ export default async function AboutPage({ params }: Props) {
             <h2 className="text-2xl font-bold">{t('volunteerTitle')}</h2>
           </div>
           <p className="text-white/90 text-base leading-relaxed max-w-2xl mx-auto">
-            {t('volunteerText')}
+            {content['about_volunteer_text'] || t('volunteerText')}
           </p>
           <Link
             href={`/${locale}/donate`}

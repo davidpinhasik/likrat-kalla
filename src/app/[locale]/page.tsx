@@ -4,6 +4,8 @@ import { Heart, Gift, BookOpen, Users, Star, Handshake, Quote } from 'lucide-rea
 import PublicLayout from '@/components/PublicLayout';
 import HeroCarousel from '@/components/HeroCarousel';
 import { getSiteMedia } from '@/lib/data/media';
+import { getSiteContent } from '@/lib/data/content';
+import type { Locale } from '@/types/database';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -11,10 +13,14 @@ type Props = {
 
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
+  const loc = (locale === 'he' ? 'he' : 'en') as Locale;
   const t = await getTranslations({ locale, namespace: 'home' });
 
-  // Fetch hero carousel slides from DB / seed
-  const carouselSlides = await getSiteMedia('landing_carousel');
+  // Fetch hero carousel slides and dynamic copy overrides
+  const [carouselSlides, content] = await Promise.all([
+    getSiteMedia('landing_carousel'),
+    getSiteContent(loc),
+  ]);
 
   const impactStats = [
     { icon: Users, value: '2,000+', label: t('impactBrides') },
@@ -69,10 +75,10 @@ export default async function HomePage({ params }: Props) {
             <span>לקראת כלה · Likrat Kalla</span>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 max-w-3xl mx-auto">
-            {t('heroTitle')}
+            {content['home_hero_title'] || t('heroTitle')}
           </h1>
           <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-            {t('heroSubtitle')}
+            {content['home_hero_subtitle'] || t('heroSubtitle')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link

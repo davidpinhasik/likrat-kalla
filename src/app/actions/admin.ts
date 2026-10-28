@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type {
@@ -145,6 +146,7 @@ export async function upsertSiteContent(
     { onConflict: 'key,locale' },
   );
   if (error) return { ok: false, reason: 'error', message: error.message };
+  revalidatePath('/', 'layout');
   return { ok: true };
 }
 
@@ -203,6 +205,7 @@ export async function createMedia(payload: {
     .select()
     .single();
   if (error) return { ok: false, reason: 'error', message: error.message };
+  revalidatePath('/', 'layout');
   return { ok: true, data: data as SiteMedia };
 }
 
@@ -221,6 +224,7 @@ export async function updateMedia(
     .update(payload)
     .eq('id', id);
   if (error) return { ok: false, reason: 'error', message: error.message };
+  revalidatePath('/', 'layout');
   return { ok: true };
 }
 
@@ -233,6 +237,7 @@ export async function deleteMedia(id: string): Promise<ActionResult> {
 
   const { error } = await client.from('site_media').delete().eq('id', id);
   if (error) return { ok: false, reason: 'error', message: error.message };
+  revalidatePath('/', 'layout');
   return { ok: true };
 }
 
