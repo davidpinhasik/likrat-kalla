@@ -1,4 +1,5 @@
 import type { PrayerSubmission, PrayerReason } from '@/types/database';
+import PrintButton from './PrintButton';
 
 type Props = {
   submissions: PrayerSubmission[];
@@ -48,12 +49,7 @@ export default function PrintablePrayerSheet({ submissions, reasons }: Props) {
           <p className="font-bold text-lg">Prayer Distribution Sheet</p>
           <p className="text-sm text-white/70">Formatted for print — {submissions.length} submissions, {allNames.length} names</p>
         </div>
-        <button
-          onClick={() => window.print()}
-          className="bg-brand-gold text-brand-navy font-bold px-5 py-2 rounded-lg hover:bg-brand-gold-hover transition-colors"
-        >
-          🖨 Print
-        </button>
+        <PrintButton />
       </div>
 
       {/* Printable content */}
