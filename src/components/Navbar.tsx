@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { useState } from 'react';
 import { Menu, X, Heart } from 'lucide-react';
@@ -47,23 +48,21 @@ export default function Navbar({
       {/* Main Navbar */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20">
             {/* Logo / Brand */}
             <Link
               href={`/${locale}`}
-              className="flex items-center gap-2 flex-shrink-0"
+              className="flex items-center flex-shrink-0"
             >
-              <div className="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center">
-                <Heart className="w-4 h-4 text-white" aria-hidden="true" />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-base font-bold text-brand-navy">
-                  לקראת כלה
-                </span>
-                <span className="text-[10px] text-brand-gold font-semibold tracking-wide uppercase">
-                  {tNavbar('tagline')}
-                </span>
-              </div>
+              <Image
+                src="/logos/lk-logo.png"
+                alt="לקראת כלה — Likrat Kalla"
+                width={357}
+                height={198}
+                priority
+                className="h-16 w-auto"
+              />
+              <span className="sr-only">{tNavbar('tagline')}</span>
             </Link>
 
             {/* Desktop nav links */}

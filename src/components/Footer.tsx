@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
-import { Heart, Phone, ExternalLink } from 'lucide-react';
+import { Heart, Phone } from 'lucide-react';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -40,10 +41,15 @@ export default function Footer() {
               href="https://www.lemaanachai.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-brand-gold-light hover:text-white transition-colors font-semibold"
+              className="inline-block bg-white rounded-lg p-2 hover:opacity-90 transition-opacity"
             >
-              {t('lemaan')}
-              <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+              <Image
+                src="/logos/la-logo.png"
+                alt={`${t('lemaan')} — Lema'an Achai`}
+                width={300}
+                height={216}
+                className="h-20 w-auto"
+              />
             </Link>
             <p className="text-gray-400 text-xs">
               Providing trusted charitable services to the Beit Shemesh
