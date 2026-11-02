@@ -27,10 +27,16 @@ export default async function ContactPage({ params }: Props) {
       highlight: false,
     },
     {
-      ext: '2/3',
+      ext: '2',
       title: t('ivrExt2Title'),
       desc: t('ivrExt2Desc'),
       highlight: true,
+    },
+    {
+      ext: '3',
+      title: t('ivrExt3Title'),
+      desc: t('ivrExt3Desc'),
+      highlight: false,
     },
   ];
 
@@ -130,6 +136,7 @@ export default async function ContactPage({ params }: Props) {
                   {t('ivrHoursWinter')}
                 </li>
               </ul>
+              <p className="mt-3 text-sm text-gray-600">{t('ivrHoursNote')}</p>
               <p className="mt-3 text-xs text-gray-400 italic">{content['contact_ivr_note'] || t('ivrNote')}</p>
             </div>
           </div>
