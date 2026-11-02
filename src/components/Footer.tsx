@@ -2,8 +2,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { Heart, Phone } from 'lucide-react';
+import { toTelHref } from '@/lib/phone';
 
-export default function Footer() {
+type FooterProps = {
+  /** Admin-managed phone number (Page Copy → contact_phone). Hidden when empty. */
+  phone?: string;
+  /** Admin-managed text under the phone number (Page Copy → contact_phone_note). */
+  phoneNote?: string;
+};
+
+export default function Footer({ phone = '', phoneNote = '' }: FooterProps) {
   const t = useTranslations('footer');
   const locale = useLocale();
   const year = new Date().getFullYear();
@@ -57,19 +65,27 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Contact column */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
-              {t('phone')}
-            </h3>
-            <div className="flex items-start gap-2 text-gray-300">
-              <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-brand-gold" aria-hidden="true" />
-              <div>
-                <p className="font-semibold text-white">{t('phoneNumber')}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{t('ivr')}</p>
+          {/* Contact column (only when an admin has entered a phone number) */}
+          {phone && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
+                {t('phone')}
+              </h3>
+              <div className="flex items-start gap-2 text-gray-300">
+                <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-brand-gold" aria-hidden="true" />
+                <div>
+                  <a
+                    href={toTelHref(phone)}
+                    dir="ltr"
+                    className="font-semibold text-white hover:text-brand-gold-light transition-colors"
+                  >
+                    {phone}
+                  </a>
+                  {phoneNote && <p className="text-xs text-gray-400 mt-0.5">{phoneNote}</p>}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Bottom bar */}

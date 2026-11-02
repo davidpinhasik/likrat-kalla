@@ -27,8 +27,6 @@
     "parentOrg": "Under the auspices of",
     "lemaan": "Lemaan Achai",
     "phone": "Phone",
-    "phoneNumber": "+972-2-532-8888",
-    "ivr": "Press 1 for info • Press 2/3 for donor inquiries",
     "copyright": "© {year} Likrat Kalla. All rights reserved.",
     "adminLogin": "Admin Login",
     "missionStatement": "Providing ~10 essential household gifts to needy brides in Israel — because every Jewish bride deserves a beautiful start."
@@ -89,7 +87,6 @@
     "recipientIntro": "If you are a bride in need of household gifts, please reach out to us by phone. We handle all inquiries with complete sensitivity and discretion.",
     "ivrTitle": "How to Reach Us by Phone",
     "ivrStep1Title": "Call our main number",
-    "ivrStep1Desc": "Dial +972-2-532-8888",
     "ivrExt1Title": "Press 1 — Application Information",
     "ivrExt1Desc": "For information about the application process and eligibility for receiving a gift package.",
     "ivrExt2Title": "Press 2 or 3 — Speak with a Representative",

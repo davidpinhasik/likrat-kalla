@@ -3,6 +3,7 @@ import { Phone, Clock, Mail, Heart } from 'lucide-react';
 import PublicLayout from '@/components/PublicLayout';
 import ContactForm from '@/components/ContactForm';
 import { getSiteContent } from '@/lib/data/content';
+import { toTelHref } from '@/lib/phone';
 import type { Locale } from '@/types/database';
 
 type Props = {
@@ -16,6 +17,7 @@ export default async function ContactPage({ params }: Props) {
     getTranslations({ locale, namespace: 'contact' }),
     getSiteContent(loc),
   ]);
+  const phone = content['contact_phone']?.trim() ?? '';
 
   const ivrSteps = [
     {
@@ -66,12 +68,15 @@ export default async function ContactPage({ params }: Props) {
               </div>
               <div>
                 <p className="text-sm text-gray-300 font-medium">{t('ivrStep1Title')}</p>
-                <a
-                  href="tel:+97225328888"
-                  className="text-xl font-bold text-brand-gold hover:text-brand-gold/80 transition-colors"
-                >
-                  {t('ivrStep1Desc')}
-                </a>
+                {phone && (
+                  <a
+                    href={toTelHref(phone)}
+                    dir="ltr"
+                    className="text-xl font-bold text-brand-gold hover:text-brand-gold/80 transition-colors"
+                  >
+                    {phone}
+                  </a>
+                )}
               </div>
             </div>
 
@@ -136,20 +141,23 @@ export default async function ContactPage({ params }: Props) {
             </h2>
             <p className="text-gray-600 mb-5">{t('donorIntro')}</p>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-9 h-9 rounded-lg bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-4 h-4 text-brand-gold" aria-hidden="true" />
+              {phone && (
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-9 h-9 rounded-lg bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-4 h-4 text-brand-gold" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">{t('donorPhone')}</p>
+                    <a
+                      href={toTelHref(phone)}
+                      dir="ltr"
+                      className="font-semibold text-brand-navy hover:text-brand-gold transition-colors"
+                    >
+                      {phone}
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-500 text-xs">{t('donorPhone')}</p>
-                  <a
-                    href="tel:+97225328888"
-                    className="font-semibold text-brand-navy hover:text-brand-gold transition-colors"
-                  >
-                    +972-2-532-8888
-                  </a>
-                </div>
-              </div>
+              )}
               <div className="flex items-center gap-3 text-sm">
                 <div className="w-9 h-9 rounded-lg bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
                   <Mail className="w-4 h-4 text-brand-gold" aria-hidden="true" />

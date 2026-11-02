@@ -373,7 +373,8 @@ at `www.lkauction.com`. You can schedule exactly when it appears and disappears.
 |---|---|
 | Change homepage headline | Content → Edit "Hero Title" |
 | Change About Us story text | Content → Edit "About Story" |
-| Update contact phone number | Content → Edit "Contact Phone" |
+| Update contact phone number (footer & Contact page) | Content → Edit "Contact — Phone Number" (enter it in both English and Hebrew) |
+| Change the text under the phone number in the footer | Content → Edit "Contact — Text Under Phone Number" |
 | Add a new gallery photo | Media → Upload Photo |
 | Add a YouTube video | Media → Add Video |
 | Change a gift item's price | Catalog → Edit item → update Price |

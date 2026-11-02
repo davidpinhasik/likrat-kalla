@@ -21,6 +21,8 @@ const CONTENT_KEYS = [
   { key: 'about_history_text', label: 'About — History Text' },
   { key: 'about_partnership_text', label: 'About — Partnership Text' },
   { key: 'about_volunteer_text', label: 'About — Volunteer Text' },
+  { key: 'contact_phone', label: 'Contact — Phone Number (footer & contact page)' },
+  { key: 'contact_phone_note', label: 'Contact — Text Under Phone Number (footer)' },
   { key: 'contact_ivr_note', label: 'Contact — IVR Note' },
   { key: 'footer_mission_statement', label: 'Footer Mission Statement' },
 ];
