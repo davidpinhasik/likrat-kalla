@@ -45,14 +45,24 @@ export default function DonatePathways({
   const [active, setActive] = useState<PathwayId>('general');
   const rootRef = useRef<HTMLDivElement>(null);
 
+  // Bring the tabs and the selected panel into view (below the sticky navbar).
+  // Delayed slightly so the new panel has rendered first.
+  const scrollToPathways = useCallback((behavior: ScrollBehavior = 'auto') => {
+    setTimeout(() => rootRef.current?.scrollIntoView({ block: 'start', behavior }), 100);
+  }, []);
+
+  function selectPathway(id: PathwayId) {
+    setActive(id);
+    scrollToPathways('smooth');
+  }
+
   // Open (and scroll to) the pathway named in the URL hash, e.g. /donate#sponsor.
   const openFromHash = useCallback(() => {
     const pathway = HASH_TO_PATHWAY[window.location.hash.slice(1).toLowerCase()];
     if (!pathway) return;
     setActive(pathway);
-    // Wait for the new panel to render and for Next.js' own scroll handling.
-    setTimeout(() => rootRef.current?.scrollIntoView({ block: 'start' }), 100);
-  }, []);
+    scrollToPathways();
+  }, [scrollToPathways]);
 
   useEffect(() => {
     const initial = setTimeout(openFromHash, 0);
@@ -112,7 +122,7 @@ export default function DonatePathways({
               id={`pathway-tab-${id}`}
               aria-selected={selected}
               aria-controls={`pathway-panel-${id}`}
-              onClick={() => setActive(id)}
+              onClick={() => selectPathway(id)}
               className={`text-start rounded-2xl border p-5 transition-colors ${
                 selected
                   ? 'bg-brand-navy text-white border-brand-navy'
