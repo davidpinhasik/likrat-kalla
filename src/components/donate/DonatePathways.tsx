@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   ExternalLink,
@@ -15,6 +15,15 @@ import CatalogDonation from './CatalogDonation';
 import KallaSponsor from './KallaSponsor';
 
 type PathwayId = 'general' | 'package' | 'catalog' | 'kalla';
+
+/** URL hashes (e.g. from home page cards) that open a specific pathway. */
+const HASH_TO_PATHWAY: Record<string, PathwayId> = {
+  general: 'general',
+  package: 'package',
+  catalog: 'catalog',
+  sponsor: 'kalla',
+  kalla: 'kalla',
+};
 
 type Props = {
   /** Pre-built Lemaan Achai URL for the general donation CTA. */
@@ -34,6 +43,25 @@ export default function DonatePathways({
 }: Props) {
   const t = useTranslations('donate');
   const [active, setActive] = useState<PathwayId>('general');
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Open (and scroll to) the pathway named in the URL hash, e.g. /donate#sponsor.
+  const openFromHash = useCallback(() => {
+    const pathway = HASH_TO_PATHWAY[window.location.hash.slice(1).toLowerCase()];
+    if (!pathway) return;
+    setActive(pathway);
+    // Wait for the new panel to render and for Next.js' own scroll handling.
+    setTimeout(() => rootRef.current?.scrollIntoView({ block: 'start' }), 100);
+  }, []);
+
+  useEffect(() => {
+    const initial = setTimeout(openFromHash, 0);
+    window.addEventListener('hashchange', openFromHash);
+    return () => {
+      clearTimeout(initial);
+      window.removeEventListener('hashchange', openFromHash);
+    };
+  }, [openFromHash]);
 
   const pathways: {
     id: PathwayId;
@@ -68,7 +96,7 @@ export default function DonatePathways({
   ];
 
   return (
-    <div>
+    <div ref={rootRef} className="scroll-mt-24">
       <div
         role="tablist"
         aria-label={t('pathwaysLabel')}
