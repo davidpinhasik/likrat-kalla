@@ -44,6 +44,14 @@ export type PrayerName = {
   note?: string | null;
 }
 
+/** One entry of prayer_submissions.items_list (catalog donations only). */
+export type PrayerItem = {
+  id: string;
+  title_en: string;
+  title_he: string;
+  quantity: number;
+}
+
 /** Shape of the `chinese_auction` site_settings value. */
 export type ChineseAuctionSettings = {
   enabled: boolean;
@@ -129,6 +137,8 @@ export type PrayerSubmission = {
   kalla_id: string | null;
   amount_nis: number;
   names_list: PrayerName[];
+  /** Donated catalog items (used to print one prayer label per item). */
+  items_list: PrayerItem[];
   emailed_to_admin: boolean;
   is_printed: boolean;
   created_at: string;

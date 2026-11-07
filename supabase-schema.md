@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS public.prayer_submissions (
     kalla_id UUID REFERENCES public.kallas(id) ON DELETE SET NULL,
     amount_nis NUMERIC NOT NULL DEFAULT 0,
     names_list JSONB NOT NULL DEFAULT '[]'::jsonb, -- Array of objects: [{ name: "...", reason_id: "...", note: "..." }]
+    items_list JSONB NOT NULL DEFAULT '[]'::jsonb, -- Catalog donations: [{ id: "...", title_en: "...", title_he: "...", quantity: 1 }]
     emailed_to_admin BOOLEAN NOT NULL DEFAULT false,
     is_printed BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())

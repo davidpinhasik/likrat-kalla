@@ -3,31 +3,37 @@
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Gift, Minus, Plus } from 'lucide-react';
-import type { CatalogItem } from '@/types/database';
+import type { CatalogItem, PrayerReason } from '@/types/database';
 import {
   CheckoutButton,
   DonorFields,
   EMPTY_DONOR,
+  PrayerNamesFields,
   toDonorDetails,
+  toPrayerNames,
   useCheckout,
   useFormatters,
   validateDonor,
   type DonorValues,
+  type PrayerEntry,
 } from './shared';
 
 const MAX_ITEM_QUANTITY = 50;
+const NAMES_PER_DONATION = 3;
 
 type Props = {
   items: CatalogItem[];
+  reasons: PrayerReason[];
 };
 
-export default function CatalogDonation({ items }: Props) {
+export default function CatalogDonation({ items, reasons }: Props) {
   const t = useTranslations('donate');
   const locale = useLocale() as 'en' | 'he';
   const { formatNis } = useFormatters();
   const { checkout, busy, error } = useCheckout();
 
   const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [entries, setEntries] = useState<PrayerEntry[]>([]);
   const [donor, setDonor] = useState<DonorValues>(EMPTY_DONOR);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -55,6 +61,7 @@ export default function CatalogDonation({ items }: Props) {
       locale,
       donor: toDonorDetails(donor),
       items: lines.map((l) => ({ id: l.item.id, quantity: l.quantity })),
+      names: toPrayerNames(entries, NAMES_PER_DONATION),
     });
   }
 
@@ -65,6 +72,9 @@ export default function CatalogDonation({ items }: Props) {
           {t('catalogTitle')}
         </h3>
         <p className="text-gray-600 mt-1">{t('catalogDesc')}</p>
+        <p className="text-sm text-gray-500 mt-2 italic">
+          {t('catalogImageDisclaimer')}
+        </p>
       </div>
 
       {items.length === 0 ? (
@@ -169,6 +179,19 @@ export default function CatalogDonation({ items }: Props) {
             {formatNis(total)}
           </span>
         </div>
+      </div>
+
+      <div>
+        <PrayerNamesFields
+          idPrefix="catalog"
+          slots={NAMES_PER_DONATION}
+          entries={entries}
+          onChange={setEntries}
+          reasons={reasons}
+        />
+        <p className="text-sm text-gray-600 mt-3 rounded-lg bg-brand-cream border border-gray-200 px-4 py-3">
+          {t('catalogPrayerNote')}
+        </p>
       </div>
 
       <DonorFields

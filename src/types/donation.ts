@@ -23,6 +23,7 @@ export type DonationRequest = DonationBase &
     | {
         type: 'catalog_items';
         items: { id: string; quantity: number }[];
+        names: PrayerName[];
       }
     | {
         type: 'kalla';

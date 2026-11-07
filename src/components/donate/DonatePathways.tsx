@@ -173,7 +173,9 @@ export default function DonatePathways({
         {active === 'package' && (
           <PackageSponsor packageCostNis={packageCostNis} reasons={reasons} />
         )}
-        {active === 'catalog' && <CatalogDonation items={catalogItems} />}
+        {active === 'catalog' && (
+          <CatalogDonation items={catalogItems} reasons={reasons} />
+        )}
         {active === 'kalla' && (
           <KallaSponsor
             kallas={kallas}

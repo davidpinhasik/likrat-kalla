@@ -1,7 +1,11 @@
 'use server';
 
 import { headers } from 'next/headers';
-import type { PrayerName, SponsorshipType } from '@/types/database';
+import type {
+  PrayerItem,
+  PrayerName,
+  SponsorshipType,
+} from '@/types/database';
 import type { DonationRequest, DonationResult } from '@/types/donation';
 import {
   getAvailableKallas,
@@ -73,6 +77,7 @@ export async function submitDonation(
     let sponsorshipType: SponsorshipType;
     let kallaId: string | null = null;
     let names: PrayerName[] = [];
+    const items: PrayerItem[] = [];
     const details: string[] = [];
 
     switch (request.type) {
@@ -100,10 +105,17 @@ export async function submitDonation(
           return { ok: false, error: 'invalid_request' };
         }
         amount += quantity * item.price_nis;
+        items.push({
+          id: item.id,
+          title_en: item.title_en,
+          title_he: item.title_he,
+          quantity,
+        });
         details.push(`${quantity} x ${item.title_en} (${item.price_nis} NIS)`);
       }
       if (amount <= 0) return { ok: false, error: 'invalid_request' };
       sponsorshipType = 'catalog_items';
+      names = cleanNames(request.names, MAX_NAMES_PER_PACKAGE);
       break;
     }
     case 'kalla': {
@@ -139,6 +151,9 @@ export async function submitDonation(
     kalla_id: kallaId,
     amount_nis: amount,
     names_list: names,
+    // Only sent for catalog donations so other flows keep working even
+    // before the items_list column migration has been applied.
+    ...(items.length > 0 ? { items_list: items } : {}),
   });
   if (!saved.ok && saved.reason === 'error') {
     console.error('[donate] Failed to save prayer submission:', saved.message);

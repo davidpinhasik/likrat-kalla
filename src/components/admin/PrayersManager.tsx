@@ -121,13 +121,22 @@ export default function PrayersManager({ initialSubmissions, initialReasons }: P
           <h1 className="text-2xl font-bold text-brand-navy">{t('prayersTitle')}</h1>
           <p className="text-sm text-gray-500 mt-0.5">{t('prayersSubtitle')}</p>
         </div>
-        <Link
-          href={`/${locale}/admin/prayers/print`}
-          target="_blank"
-          className="text-sm border border-brand-navy text-brand-navy px-4 py-2 rounded-lg hover:bg-brand-navy/5 transition-colors"
-        >
-          🖨 {t('prayersPrint')}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={`/${locale}/admin/prayers/labels`}
+            target="_blank"
+            className="text-sm border border-brand-navy text-brand-navy px-4 py-2 rounded-lg hover:bg-brand-navy/5 transition-colors"
+          >
+            🖨 {t('prayersPrintLabels')}
+          </Link>
+          <Link
+            href={`/${locale}/admin/prayers/print`}
+            target="_blank"
+            className="text-sm border border-brand-navy text-brand-navy px-4 py-2 rounded-lg hover:bg-brand-navy/5 transition-colors"
+          >
+            🖨 {t('prayersPrint')}
+          </Link>
+        </div>
       </div>
 
       {feedback && (
