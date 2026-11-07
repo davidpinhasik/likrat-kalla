@@ -85,16 +85,15 @@ export default function PrintableItemPrayerLabels({
               <ol className="space-y-[0.5mm]" style={{ fontSize: '9pt' }}>
                 {label.names.map((n, i) => (
                   <li key={i} className="leading-tight">
-                    <span className="font-semibold">{n.name}</span>
+                    <p className="font-semibold">{n.name}</p>
                     {n.reasonHe && (
-                      <span
+                      <p
                         dir="rtl"
                         className="text-gray-700"
                         style={{ fontSize: '7pt' }}
                       >
-                        {' '}
-                        — {n.reasonHe}
-                      </span>
+                        {n.reasonHe}
+                      </p>
                     )}
                   </li>
                 ))}
