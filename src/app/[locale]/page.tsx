@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { Heart, Gift, BookOpen, Users, Star, Handshake, Quote } from 'lucide-react';
+import { Heart, Gift, BookOpen, Users, Star, Handshake, HandHeart, Quote } from 'lucide-react';
 import PublicLayout from '@/components/PublicLayout';
 import HeroCarousel from '@/components/HeroCarousel';
 import { getSiteMedia } from '@/lib/data/media';
@@ -63,6 +63,12 @@ export default async function HomePage({ params }: Props) {
       title: t('cardCatalogTitle'),
       desc: t('cardCatalogDesc'),
       href: `/${locale}/donate#catalog`,
+    },
+    {
+      icon: HandHeart,
+      title: t('cardGeneralTitle'),
+      desc: t('cardGeneralDesc'),
+      href: `/${locale}/donate#general`,
     },
   ];
 
@@ -140,7 +146,10 @@ export default async function HomePage({ params }: Props) {
       {/* ── Action Cards ── */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h2 className="text-2xl font-bold text-brand-navy text-center mb-10">
+            {t('waysToGiveTitle')}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {actionCards.map(({ icon: Icon, title, desc, href }) => (
               <div
                 key={title}
