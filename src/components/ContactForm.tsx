@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { submitContactMessage } from '@/app/actions/contact';
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -16,6 +17,7 @@ export default function ContactForm() {
     email: '',
     phone: '',
     message: '',
+    website: '',
   });
 
   function validate() {
@@ -41,10 +43,8 @@ export default function ContactForm() {
     setState('submitting');
 
     try {
-      // POST to a Next.js API route (to be implemented in Sub-Task 5).
-      // For now, simulate a 1-second network delay.
-      await new Promise((res) => setTimeout(res, 1000));
-      setState('success');
+      const result = await submitContactMessage(values);
+      setState(result.ok ? 'success' : 'error');
     } catch {
       setState('error');
     }
@@ -164,6 +164,20 @@ export default function ContactForm() {
             {errors.message}
           </p>
         )}
+      </div>
+
+      {/* Honeypot: invisible to people, bots fill it in */}
+      <div className="hidden" aria-hidden="true">
+        <label htmlFor="contact-website">Website</label>
+        <input
+          id="contact-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={values.website}
+          onChange={handleChange}
+        />
       </div>
 
       {/* Error banner */}

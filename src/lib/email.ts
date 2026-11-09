@@ -76,23 +76,27 @@ function buildContent(n: AdminNotification) {
   return { subject, text, html };
 }
 
+type OutgoingEmail = {
+  recipients: string[];
+  replyTo: string;
+  subject: string;
+  text: string;
+  html: string;
+}
+
 /**
- * Notifies the admins about a new donation / prayer request.
- * Uses Resend when RESEND_API_KEY is set; otherwise logs the email to the
- * console (mock mode) so the flow works with zero configuration.
- * Never throws.
+ * Sends an email through Resend when RESEND_API_KEY is set; otherwise logs it
+ * to the console (mock mode). Never throws.
  */
-export async function sendAdminNotification(
-  notification: AdminNotification,
-): Promise<SendEmailResult> {
-  const { subject, text, html } = buildContent(notification);
+async function sendEmail(email: OutgoingEmail): Promise<SendEmailResult> {
+  const { subject, text, html } = email;
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const configured = !!apiKey && !PLACEHOLDER_PATTERN.test(apiKey);
 
   const cleanRecipients = (
-    Array.isArray(notification.recipients)
-      ? notification.recipients
-      : [String(notification.recipients)]
+    Array.isArray(email.recipients)
+      ? email.recipients
+      : [String(email.recipients)]
   )
     .map((r) => r.trim())
     .filter((r) => r.length > 0 && r.includes('@'));
@@ -115,7 +119,7 @@ export async function sendAdminNotification(
       body: JSON.stringify({
         from: fromAddress,
         to: cleanRecipients,
-        reply_to: notification.donor.email,
+        reply_to: email.replyTo,
         subject,
         text,
         html,
@@ -128,7 +132,59 @@ export async function sendAdminNotification(
     }
     return { ok: true, mocked: false };
   } catch (err) {
-    console.warn('[email] Failed to send admin notification:', err);
+    console.warn('[email] Failed to send email:', err);
     return { ok: false, mocked: false };
   }
+}
+
+/**
+ * Notifies the admins about a new donation / prayer request.
+ * Uses Resend when RESEND_API_KEY is set; otherwise logs the email to the
+ * console (mock mode) so the flow works with zero configuration.
+ * Never throws.
+ */
+export async function sendAdminNotification(
+  notification: AdminNotification,
+): Promise<SendEmailResult> {
+  return sendEmail({
+    recipients: notification.recipients,
+    replyTo: notification.donor.email,
+    ...buildContent(notification),
+  });
+}
+
+export type ContactMessage = {
+  recipients: string[];
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+
+/**
+ * Forwards a message from the public contact form to the admins. Replies go
+ * straight to the sender. Never throws.
+ */
+export async function sendContactMessage(
+  contact: ContactMessage,
+): Promise<SendEmailResult> {
+  const lines = [
+    `Name: ${contact.name}`,
+    `Email: ${contact.email}`,
+    `Phone: ${contact.phone || '-'}`,
+    '',
+    'Message:',
+    ...contact.message.split(/\r?\n/),
+  ];
+  const html = `<div style="font-family:Arial,sans-serif;line-height:1.5">${lines
+    .map((l) => (l === '' ? '<br/>' : `<div>${escapeHtml(l)}</div>`))
+    .join('')}</div>`;
+
+  return sendEmail({
+    recipients: contact.recipients,
+    replyTo: contact.email,
+    subject: `Likrat Kalla contact form: ${contact.name}`,
+    text: lines.join('\n'),
+    html,
+  });
 }
