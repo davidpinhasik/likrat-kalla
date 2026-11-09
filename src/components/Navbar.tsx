@@ -3,21 +3,24 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { Menu, X, Heart } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import EventBanner from './EventBanner';
+import { isWithinAuctionDates } from '@/lib/auction';
 
 type NavbarProps = {
-  /** ISO date strings from admin settings — passed from a server component */
-  auctionActive?: boolean;
+  /** Auction "enabled" switch and ISO dates from admin settings */
+  auctionEnabled?: boolean;
   auctionFromDate?: string | null;
   auctionToDate?: string | null;
   auctionUrl?: string;
 };
 
+const noopSubscribe = () => () => {};
+
 export default function Navbar({
-  auctionActive = false,
+  auctionEnabled = false,
   auctionFromDate = null,
   auctionToDate = null,
   auctionUrl = 'https://www.lkauction.com',
@@ -26,6 +29,15 @@ export default function Navbar({
   const tNavbar = useTranslations('navbar');
   const locale = useLocale();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Checked in the browser against today's date: pages are statically cached,
+  // so a server-side check would stay frozen until the next rebuild.
+  const withinAuctionDates = useSyncExternalStore(
+    noopSubscribe,
+    () => isWithinAuctionDates(auctionFromDate, auctionToDate),
+    () => false,
+  );
+  const auctionActive = auctionEnabled && withinAuctionDates;
 
   const navLinks = [
     { key: 'home', href: `/${locale}` },
@@ -36,14 +48,8 @@ export default function Navbar({
 
   return (
     <>
-      {/* Event Banner (shown only when active per server-side date check) */}
-      {auctionActive && (
-        <EventBanner
-          fromDate={auctionFromDate}
-          toDate={auctionToDate}
-          auctionUrl={auctionUrl}
-        />
-      )}
+      {/* Event Banner (shown only within the admin-set auction dates) */}
+      {auctionActive && <EventBanner auctionUrl={auctionUrl} />}
 
       {/* Main Navbar */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">

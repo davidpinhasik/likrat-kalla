@@ -1,34 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { ExternalLink, X } from 'lucide-react';
 import { useState } from 'react';
 
 type EventBannerProps = {
-  /** ISO date strings from admin settings */
-  fromDate?: string | null;
-  toDate?: string | null;
   auctionUrl?: string;
 };
 
+/** Rendered by Navbar only while the auction is live (date check lives there). */
 export default function EventBanner({
-  fromDate,
-  toDate,
   auctionUrl = 'https://www.lkauction.com',
 }: EventBannerProps) {
   const t = useTranslations('eventBanner');
-  const locale = useLocale();
   const [dismissed, setDismissed] = useState(false);
 
-  // Show when within the date range (or always when no dates configured in dev)
-  const now = new Date();
-  const start = fromDate ? new Date(fromDate) : null;
-  const end = toDate ? new Date(toDate) : null;
-  const withinRange =
-    (!start || now >= start) && (!end || now <= end);
-
-  if (!withinRange || dismissed) return null;
+  if (dismissed) return null;
 
   return (
     <div

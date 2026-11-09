@@ -11,22 +11,17 @@ type PublicLayoutProps = {
 
 export default async function PublicLayout({ children }: PublicLayoutProps) {
   const locale = (await getLocale()) === 'he' ? 'he' : 'en';
-  // Fetch auction settings server-side so the banner decision is authoritative
+  // Pages are statically cached, so the date check happens in the browser
+  // (see Navbar). The server only passes the settings.
   const [auction, content] = await Promise.all([
     getSiteSetting('chinese_auction'),
     getSiteContent(locale as Locale),
   ]);
 
-  const now = new Date();
-  const start = new Date(auction.start_date);
-  const end = new Date(auction.end_date);
-  end.setUTCHours(23, 59, 59, 999);
-  const auctionActive = auction.enabled && now >= start && now <= end;
-
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar
-        auctionActive={auctionActive}
+        auctionEnabled={auction.enabled}
         auctionFromDate={auction.start_date}
         auctionToDate={auction.end_date}
         auctionUrl={auction.url}
