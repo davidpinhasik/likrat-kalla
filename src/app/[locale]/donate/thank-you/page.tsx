@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -5,6 +6,11 @@ import PublicLayout from '@/components/PublicLayout';
 
 type Props = {
   params: Promise<{ locale: string }>;
+};
+
+// Thank-you page follows a payment redirect: keep it out of search results.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
 };
 
 export default async function ThankYouPage({ params }: Props) {

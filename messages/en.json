@@ -184,6 +184,16 @@
     "errorInvalid": "Something is wrong with your selection. Please review it and try again.",
     "errorGeneric": "Something went wrong. Please try again or contact us directly by phone."
   },
+  "seo": {
+    "homeTitle": "Likrat Kalla – Helping Jewish Brides in Israel",
+    "homeDescription": "Likrat Kalla, a volunteer-run project under Lemaan Achai, gives needy Jewish brides in Israel about 10 essential household gifts. Donate, sponsor a bride, or choose gifts from our catalog.",
+    "aboutTitle": "About Likrat Kalla – Our Mission and Story",
+    "aboutDescription": "Learn about Likrat Kalla, our mission, and over two decades of helping Jewish brides in Israel start their homes, run entirely by volunteers.",
+    "donateTitle": "Donate & Sponsor a Bride | Likrat Kalla",
+    "donateDescription": "Give a bride a beautiful start: make a general donation, sponsor a gift package, pick household items from our catalog, or sponsor a specific bride.",
+    "contactTitle": "Contact Us | Likrat Kalla",
+    "contactDescription": "Get in touch with Likrat Kalla, whether you are a bride seeking help or a donor with questions."
+  },
   "thankYou": {
     "title": "Thank You!",
     "message": "Your generosity helps a Jewish bride begin her new home with dignity and joy.",

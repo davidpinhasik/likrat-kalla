@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Heart, Users, Handshake, CheckCircle2 } from 'lucide-react';
@@ -5,11 +6,23 @@ import PublicLayout from '@/components/PublicLayout';
 import MediaGallery from '@/components/MediaGallery';
 import { getSiteMedia } from '@/lib/data/media';
 import { getSiteContent } from '@/lib/data/content';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Locale } from '@/types/database';
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'seo' });
+  return buildPageMetadata({
+    locale,
+    path: '/about',
+    title: t('aboutTitle'),
+    description: t('aboutDescription'),
+  });
+}
 
 export default async function AboutPage({ params }: Props) {
   const { locale } = await params;
