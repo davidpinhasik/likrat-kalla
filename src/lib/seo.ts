@@ -8,11 +8,8 @@ export const SITE_URL = (
 
 export const SITE_NAME = 'Likrat Kalla';
 
-/**
- * Social share image (1200x630 recommended), e.g. '/og-image.jpg' once the file
- * exists in /public. Left null until then so we never point to a missing image.
- */
-export const OG_IMAGE: string | null = null;
+/** Social share image, served from /public. */
+export const OG_IMAGE: string | null = '/og-image.jpg';
 
 const OG_LOCALES = { en: 'en_US', he: 'he_IL' } as const;
 

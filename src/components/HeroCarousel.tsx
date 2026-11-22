@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import type { SiteMedia } from '@/types/database';
 
 type HeroCarouselProps = {
@@ -15,6 +15,7 @@ type HeroCarouselProps = {
  */
 export default function HeroCarousel({ slides }: HeroCarouselProps) {
   const t = useTranslations('home');
+  const locale = useLocale();
   const [current, setCurrent] = useState(0);
 
   const prev = useCallback(() => {
@@ -55,7 +56,7 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={slide.url}
-            alt={slide.title_en ?? ''}
+            alt={(locale === 'he' ? slide.title_he : slide.title_en) ?? ''}
             className="w-full h-full object-cover"
             loading={i === 0 ? 'eager' : 'lazy'}
           />
