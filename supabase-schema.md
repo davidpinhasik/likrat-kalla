@@ -110,7 +110,7 @@ INSERT INTO public.site_settings (key, value, description) VALUES
 ('package_cost_nis', '500'::jsonb, 'Default cost to sponsor a bride gift package in NIS'),
 ('admin_emails', '["admin@helpjewishbrides.org"]'::jsonb, 'Emails that receive prayer notifications and donor details'),
 ('chinese_auction', '{"enabled": true, "start_date": "2025-01-01", "end_date": "2025-03-31", "url": "https://www.lkauction.com"}'::jsonb, 'Chinese auction annual event banner settings'),
-('lemaan_achai_donation_url', '"https://www.lemaanachai.org/en/project/likrat-kalla"'::jsonb, 'Lemaan Achai Likrat Kalla direct donation portal URL')
+('lemaan_achai_donation_url', '"https://www.lemaanachai.org/en/donation.php?project=10"'::jsonb, 'Lemaan Achai Likrat Kalla direct donation portal URL')
 ON CONFLICT DO NOTHING;
 
 -- ==============================================================================

@@ -23,7 +23,7 @@ export const SEED_SETTINGS: SiteSettingValues = {
     url: 'https://www.lkauction.com',
   },
   lemaan_achai_donation_url:
-    'https://www.lemaanachai.org/en/project/likrat-kalla',
+    'https://www.lemaanachai.org/en/donation.php?project=10',
 };
 
 /** Dynamic copy overrides. Empty: pages fall back to the next-intl message files. */

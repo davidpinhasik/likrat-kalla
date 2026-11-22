@@ -129,7 +129,7 @@ export default function SettingsManager({ initialSettings }: Props) {
               value={settings.lemaan_achai_donation_url}
               onChange={(e) => update('lemaan_achai_donation_url', e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
-              placeholder="https://www.lemaanachai.org/en/project/likrat-kalla"
+              placeholder="https://www.lemaanachai.org/en/donation.php?project=10"
             />
             <p className="text-xs text-gray-400 mt-1">{t('settingsLemaanUrlHint')}</p>
           </div>
