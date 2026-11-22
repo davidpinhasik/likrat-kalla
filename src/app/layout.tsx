@@ -6,14 +6,13 @@ export const metadata: Metadata = {
   description: 'Helping Jewish Brides',
 };
 
+// The <html> and <body> tags live in src/app/[locale]/layout.tsx, because they
+// need the page language, text direction and fonts. Rendering them here too
+// would nest one <html> inside another.
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html>
-      <body>{children}</body>
-    </html>
-  );
+  return children;
 }
